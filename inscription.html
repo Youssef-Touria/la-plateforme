@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Inscription</title>
+    <link rel="stylesheet" href="inscription.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Inscription</h1>
+      <form id="inscription-form" novalidate>
+        <label for="name">Nom</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          required
+          placeholder="Votre nom"
+        />
+
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="exemple@laplateforme.io"
+        />
+
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minlength="6"
+          placeholder="6 caractères minimum"
+        />
+
+        <div id="error" class="error" aria-live="polite"></div>
+
+        <button type="submit">S'inscrire</button>
+      </form>
+
+      <p class="note">
+        Ceci est un faux formulaire pour l'instant — le stockage local sera vu
+        avec votre groupe plus tard.
+      </p>
+    </main>
+
+    <script src="inscription.js"></script>
+  </body>
+</html>
