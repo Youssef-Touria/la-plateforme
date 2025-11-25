@@ -9,6 +9,8 @@
   // email doit être du domaine laplateforme.io 
   const domainRe = /^[a-zA-Z0-9._%+-]+@laplateforme\.io$/i;
 
+/*   localStorage.clear(); */
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     errorBox.style.color = ''; 
@@ -40,7 +42,7 @@
     }
 
     // --- stockage dans localStorage ---
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const users = JSON.parse(localStorage.getItem('users') || '[{"id" : 0, "email" : "admin@laplateforme.io", "role" : "admin", "password" : "admin"}]');
 
     // 2) vérifier doublon par e‑mail (insensible à la casse)
     if (users.some(u => u.email.toLowerCase() === emailVal.toLowerCase())) {
@@ -60,6 +62,7 @@
 
     //  convertir le tableau en chaîne JSON
     localStorage.setItem('users', JSON.stringify(users));
+  
 
     // feedback et reset du formulaire
     errorBox.style.color = 'green';
