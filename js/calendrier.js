@@ -40,7 +40,7 @@ function renderCalendar(month, year) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   cases.forEach((c) => {
-    c.classList.remove("other-month", "today", "selected");
+    c.classList.remove("other-month", "today", "selected", "reserved");
     c.innerHTML = "";
     c.removeAttribute("data-day");
   });
@@ -76,40 +76,32 @@ function renderCalendar(month, year) {
 
   if (titleEl) titleEl.innerText = `${monthNames[month]} ${year}`;
 
-  try {
-    cases.forEach((c, i) => {
-      const dateAttr = c.getAttribute("data-day");
-      if (dateAttr && dateAttr.startsWith("curr-")) {
-        const parts = dateAttr.split("-");
-        const d = parts[1].padStart(2, "0");
-        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${d}`;
-        c.onclick = (ev) => {
-          for (res of reservations) {
-            if (res.date === dateStr) return;
+  cases.forEach((c, i) => {
+    const dateAttr = c.getAttribute("data-day");
+    if (dateAttr && dateAttr.startsWith("curr-")) {
+      const parts = dateAttr.split("-");
+      const d = parts[1].padStart(2, "0");
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${d}`;
+      for (res of reservations) {
+        if (res.date === dateStr) {
+          c.classList.add("reserved");
+          if (res.status === "refused") {
+            c.classList.add("refused");
           }
-          ev.stopPropagation();
-          openReservationModal(dateStr, c);
-        };
-        c.style.cursor = "pointer";
-      } else {
-        c.onclick = null;
-        c.style.cursor = "";
-      }
-      if (dateAttr && dateAttr.startsWith("curr-")) {
-        const parts = dateAttr.split("-");
-        const d = parts[1].padStart(2, "0");
-        const key = `${year}-${String(month + 1).padStart(2, "0")}-${d}`;
-        if (reservations[key]) c.classList.add("reserved");
-        else {
-          c.classList.remove("reserved");
+          if (res.status === "accepted") {
+            c.classList.add("accepted");
+          }
         }
-      } else {
-        c.classList.remove("reserved");
       }
-    });
-  } catch (e) {
-    console.error(e);
-  }
+      c.onclick = (ev) => {
+        for (res of reservations) {
+          if (res.date === dateStr) return;
+        }
+        ev.stopPropagation();
+        openReservationModal(dateStr, c);
+      };
+    }
+  });
 }
 
 function buildGridIfNeeded() {
@@ -199,7 +191,6 @@ function openReservationModal(dateStr, cell) {
     const user_id = localStorage.getItem("user_id") || "";
     const login = localStorage.getItem("email") || "";
     if (!user_id || !login) return;
-    console.log(reservations);
     reservations.push({
       user_id,
       login,
@@ -211,6 +202,7 @@ function openReservationModal(dateStr, cell) {
     localStorage.setItem("calendar-reservations", JSON.stringify(reservations));
     //if (cell) cell.classList.add("reserved");
     closeModal();
+    renderCalendar(currentMonth, currentYear);
   });
 
   function closeModal() {
